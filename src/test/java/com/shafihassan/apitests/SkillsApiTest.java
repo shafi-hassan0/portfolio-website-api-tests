@@ -9,41 +9,40 @@ import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.empty;
 
-class ProjectsApiTest extends BaseApiTest {
+class SkillsApiTest extends BaseApiTest {
 
   @Test
-  void listReturnsPublishedProjects() {
+  void listReturnsPublishedSkills() {
     given()
         .accept(ContentType.JSON)
     .when()
-        .get("/api/projects")
+        .get("/api/skills")
     .then()
         .statusCode(200)
-        .contentType(ContentType.JSON)
         .body("success", equalTo(true))
         .body("data", not(empty()));
   }
 
   @Test
-  void listCanBeFilteredByFeatured() {
+  void listCanBeFilteredByType() {
     given()
         .accept(ContentType.JSON)
-        .queryParam("featured", "true")
+        .queryParam("type", "framework")
     .when()
-        .get("/api/projects")
+        .get("/api/skills")
     .then()
         .statusCode(200)
         .body("success", equalTo(true))
-        .body("data.featured", everyItem(equalTo(true)));
+        .body("data.skillType", everyItem(equalTo("framework")));
   }
 
   @Test
-  void getByIdReturnsTheProject() {
+  void getByIdReturnsTheSkill() {
     String id =
         given()
             .accept(ContentType.JSON)
         .when()
-            .get("/api/projects")
+            .get("/api/skills")
         .then()
             .statusCode(200)
         .extract()
@@ -52,7 +51,7 @@ class ProjectsApiTest extends BaseApiTest {
     given()
         .accept(ContentType.JSON)
     .when()
-        .get("/api/projects/{id}", id)
+        .get("/api/skills/{id}", id)
     .then()
         .statusCode(200)
         .body("success", equalTo(true))
@@ -64,7 +63,7 @@ class ProjectsApiTest extends BaseApiTest {
     given()
         .accept(ContentType.JSON)
     .when()
-        .get("/api/projects/does-not-exist")
+        .get("/api/skills/does-not-exist")
     .then()
         .statusCode(404)
         .body("success", equalTo(false))

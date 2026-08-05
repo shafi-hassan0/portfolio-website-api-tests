@@ -24,6 +24,13 @@
 
     <!-- Overridable via -Dapi.baseUri=... ; defaults to production. -->
     <api.baseUri>https://shafihassan.com</api.baseUri>
+
+    <!--
+      Tests tagged "live-write" have real side effects against production (e.g.
+      actually sending an email), so they're excluded by default. Run them
+      deliberately via the "live-write" Maven profile below instead.
+    -->
+    <surefire.excludedGroups>live-write</surefire.excludedGroups>
   </properties>
 
   <dependencies>
@@ -58,8 +65,30 @@
           <systemPropertyVariables>
             <api.baseUri>${api.baseUri}</api.baseUri>
           </systemPropertyVariables>
+          <excludedGroups>${surefire.excludedGroups}</excludedGroups>
         </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <!-- Activate with -Plive-write to run ONLY tests tagged "live-write". -->
+    <profile>
+      <id>live-write</id>
+      <properties>
+        <surefire.excludedGroups></surefire.excludedGroups>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <groups>live-write</groups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

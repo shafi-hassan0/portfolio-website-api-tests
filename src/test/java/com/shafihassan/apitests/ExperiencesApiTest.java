@@ -5,45 +5,30 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.empty;
 
-class ProjectsApiTest extends BaseApiTest {
+class ExperiencesApiTest extends BaseApiTest {
 
   @Test
-  void listReturnsPublishedProjects() {
+  void listReturnsPublishedExperiences() {
     given()
         .accept(ContentType.JSON)
     .when()
-        .get("/api/projects")
+        .get("/api/experiences")
     .then()
         .statusCode(200)
-        .contentType(ContentType.JSON)
         .body("success", equalTo(true))
         .body("data", not(empty()));
   }
 
   @Test
-  void listCanBeFilteredByFeatured() {
-    given()
-        .accept(ContentType.JSON)
-        .queryParam("featured", "true")
-    .when()
-        .get("/api/projects")
-    .then()
-        .statusCode(200)
-        .body("success", equalTo(true))
-        .body("data.featured", everyItem(equalTo(true)));
-  }
-
-  @Test
-  void getByIdReturnsTheProject() {
+  void getByIdReturnsTheExperience() {
     String id =
         given()
             .accept(ContentType.JSON)
         .when()
-            .get("/api/projects")
+            .get("/api/experiences")
         .then()
             .statusCode(200)
         .extract()
@@ -52,7 +37,7 @@ class ProjectsApiTest extends BaseApiTest {
     given()
         .accept(ContentType.JSON)
     .when()
-        .get("/api/projects/{id}", id)
+        .get("/api/experiences/{id}", id)
     .then()
         .statusCode(200)
         .body("success", equalTo(true))
@@ -64,7 +49,7 @@ class ProjectsApiTest extends BaseApiTest {
     given()
         .accept(ContentType.JSON)
     .when()
-        .get("/api/projects/does-not-exist")
+        .get("/api/experiences/does-not-exist")
     .then()
         .statusCode(404)
         .body("success", equalTo(false))
