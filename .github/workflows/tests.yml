@@ -36,7 +36,14 @@ jobs:
             -d "{\"state\":\"pending\",\"context\":\"API Tests\",\"description\":\"REST Assured suite running...\",\"target_url\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
 
       - name: Run API tests
-        run: mvn -B test
+        run: mvn -B test | tee test-output.log
+
+      - name: Extract test summary
+        if: always() && github.event_name == 'repository_dispatch'
+        id: summary
+        run: |
+          LINE=$(grep -oE 'Tests run: [0-9]+, Failures: [0-9]+, Errors: [0-9]+, Skipped: [0-9]+$' test-output.log | tail -1)
+          echo "line=${LINE:-Tests run: unknown}" >> "$GITHUB_OUTPUT"
 
       - name: Report success to portfolio-website
         if: success() && github.event_name == 'repository_dispatch'
@@ -45,7 +52,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.WEBSITE_STATUS_TOKEN }}" \
             https://api.github.com/repos/shafi-hassan0/portfolio-website/statuses/${{ github.event.client_payload.sha }} \
-            -d "{\"state\":\"success\",\"context\":\"API Tests\",\"description\":\"All API tests passed\",\"target_url\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
+            -d "{\"state\":\"success\",\"context\":\"API Tests\",\"description\":\"${{ steps.summary.outputs.line }}\",\"target_url\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
 
       - name: Report failure to portfolio-website
         if: failure() && github.event_name == 'repository_dispatch'
@@ -54,4 +61,4 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.WEBSITE_STATUS_TOKEN }}" \
             https://api.github.com/repos/shafi-hassan0/portfolio-website/statuses/${{ github.event.client_payload.sha }} \
-            -d "{\"state\":\"failure\",\"context\":\"API Tests\",\"description\":\"One or more API tests failed\",\"target_url\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
+            -d "{\"state\":\"failure\",\"context\":\"API Tests\",\"description\":\"${{ steps.summary.outputs.line }}\",\"target_url\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
