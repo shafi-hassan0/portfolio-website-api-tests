@@ -9,15 +9,18 @@ on:
     # 09:00 UTC daily — a nightly smoke test against production.
     - cron: "0 9 * * *"
   workflow_dispatch:
+  repository_dispatch:
+    # Fired by portfolio-website's trigger-api-tests.yml whenever backend/** changes.
+    types: [backend-changed]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: "21"
           distribution: "temurin"
