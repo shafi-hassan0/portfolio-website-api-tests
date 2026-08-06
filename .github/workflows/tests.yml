@@ -32,7 +32,7 @@ jobs:
           curl -sS -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.WEBSITE_STATUS_TOKEN }}" \
-            https://api.github.com/repos/shafi-hassan0/portfolio-website/statuses/${{ github.event.client_payload.sha }} \
+            https://api.github.com/repos/shafi-hassan0/portfolio-website-api/statuses/${{ github.event.client_payload.sha }} \
             -d "{\"state\":\"pending\",\"context\":\"API Tests\",\"description\":\"REST Assured suite running...\",\"target_url\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
 
       - name: Run API tests
@@ -51,7 +51,7 @@ jobs:
           curl -sS -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.WEBSITE_STATUS_TOKEN }}" \
-            https://api.github.com/repos/shafi-hassan0/portfolio-website/statuses/${{ github.event.client_payload.sha }} \
+            https://api.github.com/repos/shafi-hassan0/portfolio-website-api/statuses/${{ github.event.client_payload.sha }} \
             -d "{\"state\":\"success\",\"context\":\"API Tests\",\"description\":\"${{ steps.summary.outputs.line }}\",\"target_url\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
 
       - name: Report failure to portfolio-website
@@ -60,5 +60,5 @@ jobs:
           curl -sS -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.WEBSITE_STATUS_TOKEN }}" \
-            https://api.github.com/repos/shafi-hassan0/portfolio-website/statuses/${{ github.event.client_payload.sha }} \
+            https://api.github.com/repos/shafi-hassan0/portfolio-website-api/statuses/${{ github.event.client_payload.sha }} \
             -d "{\"state\":\"failure\",\"context\":\"API Tests\",\"description\":\"${{ steps.summary.outputs.line }}\",\"target_url\":\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
