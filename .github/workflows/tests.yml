@@ -36,7 +36,12 @@ jobs:
           cache: maven
 
       - name: Run API tests
-        run: mvn -B test | tee test-output.log
+        # set -o pipefail: without it, this step's exit code is `tee`'s (always
+        # 0), not mvn's — so real test failures got silently reported as a
+        # passing job and a green commit status.
+        run: |
+          set -o pipefail
+          mvn -B test | tee test-output.log
 
       - name: Extract test summary
         if: always() && github.event_name == 'repository_dispatch'
